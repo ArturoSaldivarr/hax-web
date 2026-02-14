@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAX — Paga con tu huella</title>
+  <meta name="description" content="HAX es una plataforma de pagos biométricos. Paga con tu huella digital en cualquier comercio afiliado. Sin tarjetas, sin efectivo, sin teléfono." />
+  <meta name="theme-color" content="#000000" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --dark-bg: #000000;
+      --dark-text: #ffffff;
+      --dark-text-secondary: #999999;
+      --dark-text-muted: #555555;
+      --dark-border: rgba(255,255,255,0.08);
+      --light-bg: #ffffff;
+      --light-bg-alt: #f8f8f8;
+      --light-text: #0a0a0a;
+      --light-text-secondary: #666666;
+      --light-text-muted: #999999;
+      --light-border: rgba(0,0,0,0.08);
+      --light-border-hover: rgba(0,0,0,0.15);
+      --light-card-alt: #f5f5f5;
+      --gold: #d4a853;
+      --gold-dim: rgba(212,168,83,0.12);
+      --gold-glow: rgba(212,168,83,0.4);
+      --success: #34c759;
+      --success-dim: rgba(52,199,89,0.1);
+      --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-serif: 'DM Serif Display', Georgia, serif;
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+    body { font-family: var(--font-sans); background: var(--light-bg); color: var(--light-text); line-height: 1.6; overflow-x: hidden; }
+    ::selection { background: #000; color: #fff; }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; padding: 1.5rem 2.5rem; display: flex; align-items: center; justify-content: space-between; transition: all 0.5s var(--ease); }
+    nav.scrolled { padding: 1rem 2.5rem; background: rgba(255,255,255,0.92); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); border-bottom: 1px solid var(--light-border); }
+    nav .nav-logo { font-size: 1.4rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #fff; transition: color 0.5s; }
+    nav.scrolled .nav-logo { color: #000; }
+    .nav-links { display: flex; gap: 3rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.82rem; font-weight: 500; color: rgba(255,255,255,0.65); transition: color 0.3s; letter-spacing: 0.02em; }
+    .nav-links a:hover { color: #fff; }
+    nav.scrolled .nav-links a { color: var(--light-text-secondary); }
+    nav.scrolled .nav-links a:hover { color: var(--light-text); }
+    .nav-cta { padding: 0.55rem 1.5rem; border: 1px solid rgba(255,255,255,0.3); color: #fff !important; border-radius: 100px; font-size: 0.8rem !important; transition: all 0.3s var(--ease); }
+    .nav-cta:hover { background: #fff; color: #000 !important; }
+    nav.scrolled .nav-cta { border-color: rgba(0,0,0,0.2); color: #000 !important; }
+    nav.scrolled .nav-cta:hover { background: #000; color: #fff !important; }
+    .mobile-toggle { display: none; background: none; border: none; cursor: pointer; padding: 0.5rem; }
+    .mobile-toggle span { display: block; width: 22px; height: 1.5px; background: #fff; margin: 5px 0; transition: all 0.3s; }
+    nav.scrolled .mobile-toggle span { background: #000; }
+
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 2.5rem; position: relative; z-index: 1; }
+    section { padding: 7rem 0; position: relative; }
+
+    .section-label { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--light-text-muted); margin-bottom: 1.5rem; }
+    .section-title { font-family: var(--font-serif); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 400; line-height: 1.15; letter-spacing: -0.01em; margin-bottom: 1.2rem; color: var(--light-text); }
+    .section-subtitle { font-size: 1.05rem; color: var(--light-text-secondary); max-width: 520px; line-height: 1.7; font-weight: 400; }
+
+    /* ═══ HERO (DARK + GOLD) ═══ */
+    .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 5rem; overflow: hidden; background: var(--dark-bg); color: var(--dark-text); }
+    .hero-glow { position: absolute; top: -20%; right: -10%; width: 600px; height: 600px; background: radial-gradient(circle, var(--gold-dim) 0%, transparent 60%); pointer-events: none; }
+    .hero .container { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; align-items: center; }
+    .hero-content { position: relative; z-index: 2; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.45rem 1rem; border: 1px solid rgba(212,168,83,0.2); border-radius: 100px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(212,168,83,0.8); margin-bottom: 2.5rem; animation: fadeUp 0.7s var(--ease) both; }
+    .hero-badge .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+    .hero h1 { font-family: var(--font-serif); font-size: clamp(3.2rem, 6vw, 5rem); font-weight: 400; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 1.5rem; animation: fadeUp 0.7s var(--ease) 0.08s both; }
+    .hero h1 em { font-style: italic; color: var(--gold); text-shadow: 0 0 40px rgba(212,168,83,0.2); }
+    .hero-text { font-size: 1.1rem; color: var(--dark-text-secondary); line-height: 1.75; max-width: 440px; margin-bottom: 2.5rem; font-weight: 400; animation: fadeUp 0.7s var(--ease) 0.16s both; }
+    .hero-actions { display: flex; gap: 1rem; align-items: center; animation: fadeUp 0.7s var(--ease) 0.24s both; }
+    .btn-hero { display: inline-flex; align-items: center; gap: 0.6rem; padding: 0.95rem 2rem; background: #fff; color: #000; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; border: none; border-radius: 100px; cursor: pointer; transition: all 0.35s var(--ease); text-decoration: none; }
+    .btn-hero:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,255,255,0.12); }
+    .btn-hero svg { transition: transform 0.3s; }
+    .btn-hero:hover svg { transform: translateX(3px); }
+    .btn-hero-ghost { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.95rem 1.8rem; background: transparent; color: var(--dark-text-secondary); font-family: var(--font-sans); font-weight: 500; font-size: 0.9rem; border: none; cursor: pointer; transition: color 0.3s; text-decoration: none; }
+    .btn-hero-ghost:hover { color: #fff; }
+
+    .hero-visual { display: flex; align-items: center; justify-content: center; animation: fadeIn 1s var(--ease) 0.3s both; }
+    .fp-wrapper { position: relative; display: flex; align-items: center; justify-content: center; }
+    .fp-label { position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dark-text-muted); white-space: nowrap; }
+
+    /* ═══ LIGHT SECTIONS ═══ */
+    .what-is { background: var(--light-bg); border-top: 1px solid var(--light-border); }
+    .what-is-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; margin-top: 4rem; }
+    .what-is-text { font-size: clamp(1.1rem, 2vw, 1.3rem); color: var(--light-text-secondary); line-height: 1.8; font-weight: 400; }
+    .what-is-text strong { color: var(--light-text); font-weight: 600; }
+    .stats-row { display: flex; gap: 3rem; margin-top: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--light-border); }
+    .stat { display: flex; flex-direction: column; }
+    .stat-number { font-family: var(--font-serif); font-size: 2.5rem; line-height: 1; margin-bottom: 0.4rem; color: var(--light-text); }
+    .stat-label { font-size: 0.75rem; color: var(--light-text-muted); font-weight: 500; letter-spacing: 0.03em; }
+    .value-cards { display: flex; flex-direction: column; gap: 1.25rem; }
+    .value-card { padding: 1.8rem; border: 1px solid var(--light-border); border-radius: 16px; background: var(--light-bg); transition: all 0.4s var(--ease); }
+    .value-card:hover { border-color: var(--light-border-hover); box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+    .value-card-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; }
+    .value-card-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--light-card-alt); display: flex; align-items: center; justify-content: center; color: var(--light-text-secondary); }
+    .value-card h3 { font-size: 0.95rem; font-weight: 600; color: var(--light-text); }
+    .value-card p { font-size: 0.88rem; color: var(--light-text-secondary); line-height: 1.65; }
+
+    .how-section { background: var(--light-bg-alt); border-top: 1px solid var(--light-border); }
+    .how-tabs { display: flex; margin: 3rem 0; border: 1px solid var(--light-border); border-radius: 100px; overflow: hidden; max-width: 300px; padding: 3px; background: var(--light-bg); }
+    .how-tab { flex: 1; padding: 0.6rem 1.2rem; background: transparent; border: none; color: var(--light-text-muted); font-family: var(--font-sans); font-weight: 600; font-size: 0.85rem; cursor: pointer; border-radius: 100px; transition: all 0.35s var(--ease); }
+    .how-tab.active { background: #000; color: #fff; }
+    .how-tab:not(.active):hover { color: var(--light-text-secondary); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .step { padding: 2rem; border: 1px solid var(--light-border); border-radius: 16px; background: var(--light-bg); transition: all 0.4s var(--ease); position: relative; }
+    .step:hover { border-color: var(--light-border-hover); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.05); }
+    .step-num { font-family: var(--font-serif); font-size: 2.8rem; line-height: 1; color: rgba(0,0,0,0.06); margin-bottom: 1.5rem; }
+    .step-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--light-card-alt); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; color: var(--light-text-secondary); }
+    .step h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--light-text); }
+    .step p { font-size: 0.87rem; color: var(--light-text-secondary); line-height: 1.65; }
+    .steps .step:not(:last-child)::after { content: '→'; position: absolute; top: 2rem; right: -1rem; color: var(--light-text-muted); font-size: 0.9rem; opacity: 0.35; }
+
+    .security-section { background: var(--light-bg); border-top: 1px solid var(--light-border); }
+    .security-header { text-align: center; max-width: 560px; margin: 0 auto 4rem; }
+    .security-header .section-subtitle { margin: 0 auto; }
+    .security-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+    .sec-card { padding: 2rem; border: 1px solid var(--light-border); border-radius: 16px; background: var(--light-bg); transition: all 0.35s var(--ease); }
+    .sec-card:hover { border-color: var(--light-border-hover); box-shadow: 0 8px 30px rgba(0,0,0,0.04); }
+    .sec-card-top { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.75rem; }
+    .sec-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--success-dim); display: flex; align-items: center; justify-content: center; color: var(--success); flex-shrink: 0; }
+    .sec-card h3 { font-size: 0.95rem; font-weight: 600; color: var(--light-text); }
+    .sec-card p { font-size: 0.87rem; color: var(--light-text-secondary); line-height: 1.65; padding-left: calc(36px + 0.8rem); }
+
+    /* ═══ CONTACTO (DARK) ═══ */
+    .contact-section { background: var(--dark-bg); color: var(--dark-text); }
+    .contact-section .section-label { color: var(--dark-text-muted); }
+    .contact-section .section-title { color: var(--dark-text); }
+    .contact-section .section-subtitle { color: var(--dark-text-secondary); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; margin-top: 4rem; }
+    .contact-info h3 { font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
+    .contact-info > p { color: var(--dark-text-secondary); line-height: 1.7; margin-bottom: 2rem; font-size: 0.95rem; }
+    .contact-links { display: flex; flex-direction: column; gap: 0.75rem; }
+    .c-link { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.3rem; border: 1px solid var(--dark-border); border-radius: 12px; transition: all 0.3s var(--ease); }
+    .c-link:hover { border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+    .c-link svg { color: var(--dark-text-muted); flex-shrink: 0; }
+    .c-link-text { display: flex; flex-direction: column; }
+    .c-link-label { font-size: 0.68rem; color: var(--dark-text-muted); text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
+    .c-link-value { font-weight: 600; font-size: 0.9rem; color: #fff; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .field { display: flex; flex-direction: column; gap: 0.35rem; }
+    .field label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dark-text-muted); }
+    .field input, .field textarea { padding: 0.85rem 1rem; background: rgba(255,255,255,0.05); border: 1px solid var(--dark-border); border-radius: 10px; color: #fff; font-family: var(--font-sans); font-size: 0.9rem; outline: none; transition: border-color 0.3s; }
+    .field input::placeholder, .field textarea::placeholder { color: var(--dark-text-muted); }
+    .field input:focus, .field textarea:focus { border-color: rgba(255,255,255,0.25); }
+    .field textarea { resize: vertical; min-height: 110px; }
+    .btn-submit { padding: 0.95rem 2rem; background: #fff; color: #000; font-family: var(--font-sans); font-weight: 600; font-size: 0.9rem; border: none; border-radius: 100px; cursor: pointer; transition: all 0.35s var(--ease); align-self: flex-start; margin-top: 0.5rem; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,255,255,0.1); }
+
+    footer { background: var(--dark-bg); color: var(--dark-text); border-top: 1px solid var(--dark-border); padding: 2.5rem 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; }
+    .footer-logo { font-size: 1rem; font-weight: 700; letter-spacing: 0.2em; color: #fff; }
+    .footer-text { font-size: 0.78rem; color: var(--dark-text-muted); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s var(--ease), transform 0.7s var(--ease); }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+    .reveal-d1 { transition-delay: 0.06s; } .reveal-d2 { transition-delay: 0.12s; } .reveal-d3 { transition-delay: 0.18s; } .reveal-d4 { transition-delay: 0.24s; }
+
+    @media (max-width: 1024px) {
+      .hero .container { grid-template-columns: 1fr; text-align: center; }
+      .hero-text { margin-left: auto; margin-right: auto; }
+      .hero-actions { justify-content: center; }
+      .hero-visual { margin-top: 2rem; }
+      .what-is-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .steps { grid-template-columns: 1fr; }
+      .steps .step::after { display: none; }
+      .security-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 5rem 0; }
+      .container { padding: 0 1.5rem; }
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .mobile-toggle { display: block; }
+      .nav-links.open { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: rgba(0,0,0,0.97); backdrop-filter: blur(30px); padding: 2rem 1.5rem; gap: 1.5rem; border-bottom: 1px solid var(--dark-border); }
+      .nav-links.open a { color: rgba(255,255,255,0.65) !important; }
+      .nav-links.open a:hover { color: #fff !important; }
+      .stats-row { flex-direction: column; gap: 1.5rem; }
+      .form-row { grid-template-columns: 1fr; }
+      .hero-actions { flex-direction: column; }
+      .footer-inner { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-logo">HAX</div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#que-es">Qué es</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#seguridad">Seguridad</a></li>
+    <li><a href="#contacto" class="nav-cta">Contacto</a></li>
+  </ul>
+  <button class="mobile-toggle" id="mobileToggle" aria-label="Menú"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- ═══ HERO (DARK) ═══ -->
+<section class="hero" id="hero">
+  <div class="hero-glow"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> Pagos biométricos</div>
+      <h1>Tu huella es<br/>tu <em>cartera</em></h1>
+      <p class="hero-text">Paga con tu huella digital en cualquier comercio afiliado. Sin tarjetas, sin efectivo, sin teléfono. Solo tú.</p>
+      <div class="hero-actions">
+        <a href="#contacto" class="btn-hero">Llevar HAX a mi negocio <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+        <a href="#como-funciona" class="btn-hero-ghost">Conoce más ↓</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="fp-wrapper">
+        <svg width="320" height="380" viewBox="0 0 210 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sweepGold" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="transparent" />
+              <stop offset="28%" stop-color="transparent" />
+              <stop offset="42%" stop-color="rgba(212,168,83,0.4)" />
+              <stop offset="49%" stop-color="rgba(212,168,83,0.85)" />
+              <stop offset="51%" stop-color="rgba(212,168,83,0.85)" />
+              <stop offset="58%" stop-color="rgba(212,168,83,0.4)" />
+              <stop offset="72%" stop-color="transparent" />
+              <stop offset="100%" stop-color="transparent" />
+              <animateTransform attributeName="gradientTransform" type="translate" values="0 -0.6; 0 0.6; 0 -0.6" dur="4s" repeatCount="indefinite" />
+            </linearGradient>
+          </defs>
+          <!-- Base ghost lines -->
+          <g stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-linecap="round" fill="none">
+            <path d="M55 50 Q85 28 115 32 Q145 36 155 58"/>
+            <path d="M48 60 Q80 32 118 36 Q156 42 164 72"/>
+            <path d="M42 72 Q72 36 118 40 Q164 48 170 88"/>
+            <path d="M38 88 Q42 50 80 40 Q118 32 150 52 Q175 72 176 110 Q177 150 148 178 Q120 200 100 202 Q70 200 48 178 Q36 158 36 130"/>
+            <path d="M36 100 Q38 58 78 44 Q118 34 152 56 Q180 78 180 118 Q180 158 150 186 Q122 208 100 210 Q68 208 44 184 Q32 164 32 138"/>
+            <path d="M42 112 Q44 70 82 52 Q118 40 148 62 Q172 84 172 120 Q172 156 144 180 Q118 200 100 200 Q74 198 50 176 Q40 158 40 136"/>
+            <path d="M46 120 Q48 82 86 62 Q118 50 144 70 Q166 90 166 122 Q166 154 140 176 Q116 194 100 194 Q78 192 56 172 Q44 156 44 136"/>
+            <path d="M50 126 Q52 92 88 70 Q118 58 140 76 Q160 96 160 124 Q160 152 136 172 Q114 190 100 190 Q80 188 60 168 Q48 152 48 136"/>
+            <path d="M54 130 Q56 100 90 78 Q118 66 138 82 Q155 100 155 126 Q155 150 132 168 Q112 186 100 186 Q82 184 64 166 Q52 150 52 136"/>
+            <path d="M58 134 Q60 106 92 86 Q118 74 136 88 Q150 104 150 128 Q150 148 130 164 Q112 180 100 180 Q84 178 66 162 Q56 148 56 138"/>
+            <path d="M62 136 Q64 112 94 94 Q118 82 134 96 Q146 110 145 130 Q144 148 126 160 Q110 174 100 174 Q86 172 70 158 Q60 146 60 138"/>
+            <path d="M66 138 Q68 116 96 100 Q116 90 130 102 Q142 114 141 132 Q140 148 124 158 Q110 168 100 168 Q88 166 74 154 Q64 144 64 138"/>
+            <path d="M72 139 Q74 120 98 106 Q114 98 126 108 Q136 118 136 134 Q135 146 122 155 Q110 164 102 163 Q90 162 78 152 Q70 144 70 139"/>
+            <path d="M78 140 Q80 126 100 114 Q114 106 124 114 Q132 124 131 136 Q130 146 120 152 Q110 158 103 157 Q92 156 82 148 Q76 142 76 139"/>
+            <path d="M84 140 Q86 130 102 120 Q112 114 120 120 Q128 128 127 137 Q126 144 118 149 Q110 153 104 152 Q96 150 88 144 Q82 140 82 138"/>
+            <path d="M90 140 Q92 132 104 126 Q112 122 118 128 Q122 134 121 139 Q120 144 114 147 Q108 148 104 147 Q98 146 92 142"/>
+            <path d="M95 140 Q96 134 104 130 Q110 128 114 132 Q118 136 117 140 Q116 143 112 145 Q108 146 104 145 Q100 144 96 141"/>
+            <path d="M99 140 Q100 136 106 134 Q110 133 112 136 Q114 138 113 140 Q112 142 108 143 Q104 142 100 140"/>
+            <path d="M34 115 Q32 85 52 60 Q72 40 92 36"/>
+            <path d="M32 130 Q30 95 48 65 Q68 42 88 38"/>
+            <path d="M30 145 Q28 108 44 72 Q62 46 84 40"/>
+            <path d="M30 158 Q28 120 42 80 Q58 50 80 42"/>
+            <path d="M48 192 Q68 206 100 210 Q130 208 148 194"/>
+            <path d="M54 186 Q72 198 100 202 Q126 200 142 188"/>
+            <path d="M60 180 Q76 192 100 195 Q122 193 136 182"/>
+            <path d="M66 174 Q80 184 100 187 Q118 186 130 176"/>
+            <path d="M158 80 Q168 100 170 125 Q170 150 158 172"/>
+            <path d="M152 74 Q164 96 166 122 Q166 148 154 168"/>
+          </g>
+          <!-- Gold sweep -->
+          <g stroke="url(#sweepGold)" stroke-width="2.2" stroke-linecap="round" fill="none">
+            <path d="M55 50 Q85 28 115 32 Q145 36 155 58"/>
+            <path d="M48 60 Q80 32 118 36 Q156 42 164 72"/>
+            <path d="M42 72 Q72 36 118 40 Q164 48 170 88"/>
+            <path d="M38 88 Q42 50 80 40 Q118 32 150 52 Q175 72 176 110 Q177 150 148 178 Q120 200 100 202 Q70 200 48 178 Q36 158 36 130"/>
+            <path d="M36 100 Q38 58 78 44 Q118 34 152 56 Q180 78 180 118 Q180 158 150 186 Q122 208 100 210 Q68 208 44 184 Q32 164 32 138"/>
+            <path d="M42 112 Q44 70 82 52 Q118 40 148 62 Q172 84 172 120 Q172 156 144 180 Q118 200 100 200 Q74 198 50 176 Q40 158 40 136"/>
+            <path d="M46 120 Q48 82 86 62 Q118 50 144 70 Q166 90 166 122 Q166 154 140 176 Q116 194 100 194 Q78 192 56 172 Q44 156 44 136"/>
+            <path d="M50 126 Q52 92 88 70 Q118 58 140 76 Q160 96 160 124 Q160 152 136 172 Q114 190 100 190 Q80 188 60 168 Q48 152 48 136"/>
+            <path d="M54 130 Q56 100 90 78 Q118 66 138 82 Q155 100 155 126 Q155 150 132 168 Q112 186 100 186 Q82 184 64 166 Q52 150 52 136"/>
+            <path d="M58 134 Q60 106 92 86 Q118 74 136 88 Q150 104 150 128 Q150 148 130 164 Q112 180 100 180 Q84 178 66 162 Q56 148 56 138"/>
+            <path d="M62 136 Q64 112 94 94 Q118 82 134 96 Q146 110 145 130 Q144 148 126 160 Q110 174 100 174 Q86 172 70 158 Q60 146 60 138"/>
+            <path d="M66 138 Q68 116 96 100 Q116 90 130 102 Q142 114 141 132 Q140 148 124 158 Q110 168 100 168 Q88 166 74 154 Q64 144 64 138"/>
+            <path d="M72 139 Q74 120 98 106 Q114 98 126 108 Q136 118 136 134 Q135 146 122 155 Q110 164 102 163 Q90 162 78 152 Q70 144 70 139"/>
+            <path d="M78 140 Q80 126 100 114 Q114 106 124 114 Q132 124 131 136 Q130 146 120 152 Q110 158 103 157 Q92 156 82 148 Q76 142 76 139"/>
+            <path d="M84 140 Q86 130 102 120 Q112 114 120 120 Q128 128 127 137 Q126 144 118 149 Q110 153 104 152 Q96 150 88 144 Q82 140 82 138"/>
+            <path d="M90 140 Q92 132 104 126 Q112 122 118 128 Q122 134 121 139 Q120 144 114 147 Q108 148 104 147 Q98 146 92 142"/>
+            <path d="M95 140 Q96 134 104 130 Q110 128 114 132 Q118 136 117 140 Q116 143 112 145 Q108 146 104 145 Q100 144 96 141"/>
+            <path d="M99 140 Q100 136 106 134 Q110 133 112 136 Q114 138 113 140 Q112 142 108 143 Q104 142 100 140"/>
+            <path d="M34 115 Q32 85 52 60 Q72 40 92 36"/>
+            <path d="M32 130 Q30 95 48 65 Q68 42 88 38"/>
+            <path d="M30 145 Q28 108 44 72 Q62 46 84 40"/>
+            <path d="M30 158 Q28 120 42 80 Q58 50 80 42"/>
+            <path d="M48 192 Q68 206 100 210 Q130 208 148 194"/>
+            <path d="M54 186 Q72 198 100 202 Q126 200 142 188"/>
+            <path d="M60 180 Q76 192 100 195 Q122 193 136 182"/>
+            <path d="M66 174 Q80 184 100 187 Q118 186 130 176"/>
+            <path d="M158 80 Q168 100 170 125 Q170 150 158 172"/>
+            <path d="M152 74 Q164 96 166 122 Q166 148 154 168"/>
+          </g>
+          <!-- Scan line -->
+          <line x1="20" x2="190" stroke="rgba(212,168,83,0.9)" stroke-width="1" opacity="0.55" style="filter:drop-shadow(0 0 10px rgba(212,168,83,0.5))">
+            <animate attributeName="y1" values="20;220;20" dur="4s" repeatCount="indefinite" />
+            <animate attributeName="y2" values="20;220;20" dur="4s" repeatCount="indefinite" />
+          </line>
+        </svg>
+        <span class="fp-label">Identidad biométrica</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUÉ ES (LIGHT) ═══ -->
+<section class="what-is" id="que-es">
+  <div class="container">
+    <div class="section-label reveal">Qué es HAX</div>
+    <div class="section-title reveal reveal-d1">Identidad biométrica<br/>como método de pago</div>
+    <div class="what-is-grid">
+      <div>
+        <p class="what-is-text reveal reveal-d2">HAX es una <strong>plataforma de pagos biométricos</strong> que permite a cualquier persona pagar con su huella digital. Registra tus huellas, vincula tus tarjetas bancarias a dedos específicos, y al momento de pagar solo coloca tu dedo en el lector. <strong>Así de simple.</strong></p>
+        <div class="stats-row reveal reveal-d3">
+          <div class="stat"><span class="stat-number">10</span><span class="stat-label">Dedos registrables</span></div>
+          <div class="stat"><span class="stat-number">&lt;3s</span><span class="stat-label">Tiempo de pago</span></div>
+          <div class="stat"><span class="stat-number">0</span><span class="stat-label">Objetos necesarios</span></div>
+        </div>
+      </div>
+      <div class="value-cards">
+        <div class="value-card reveal reveal-d1"><div class="value-card-header"><div class="value-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><h3>El problema</h3></div><p>Los pagos dependen de objetos físicos: tarjetas, teléfonos, efectivo. Se pierden, se roban, se olvidan.</p></div>
+        <div class="value-card reveal reveal-d2"><div class="value-card-header"><div class="value-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>La solución</h3></div><p>Tu identidad biométrica es tu método de pago. No necesitas cargar nada — tu huella es tu cartera.</p></div>
+        <div class="value-card reveal reveal-d3"><div class="value-card-header"><div class="value-card-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div><h3>El resultado</h3></div><p>Múltiples tarjetas organizadas por dedo, pagos en segundos y puntos de lealtad en tus comercios favoritos.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CÓMO FUNCIONA (LIGHT ALT) ═══ -->
+<section class="how-section" id="como-funciona">
+  <div class="container">
+    <div class="section-label reveal">Cómo funciona</div>
+    <div class="section-title reveal reveal-d1">Simple para todos</div>
+    <p class="section-subtitle reveal reveal-d2">Dos perspectivas, una experiencia sin fricción.</p>
+    <div class="how-tabs reveal reveal-d3">
+      <button class="how-tab active" data-tab="cliente">Cliente</button>
+      <button class="how-tab" data-tab="comercio">Comercio</button>
+    </div>
+    <div class="tab-panel active" id="tab-cliente">
+      <div class="steps">
+        <div class="step reveal reveal-d1"><div class="step-num">01</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></div><h3>Descarga y regístrate</h3><p>Descarga la app HAX, crea tu cuenta y agrega tus tarjetas de crédito o débito de forma segura.</p></div>
+        <div class="step reveal reveal-d2"><div class="step-num">02</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 11c0 1.66-1.34 3-3 3s-3-1.34-3-3 1.34-3 3-3 3 1.34 3 3z"/><path d="M18 11c0 1.66-1.34 3-3 3"/><path d="M21 11c0-4.97-4.03-9-9-9s-9 4.03-9 9"/></svg></div><h3>Registra tus huellas</h3><p>Visita cualquier comercio afiliado y registra hasta 10 huellas. Vincula cada dedo a una tarjeta diferente.</p></div>
+        <div class="step reveal reveal-d3"><div class="step-num">03</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h3>Paga con tu huella</h3><p>Coloca tu dedo en el lector del comercio. El sistema te identifica, selecciona tu tarjeta, y procesa el cobro.</p></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="tab-comercio">
+      <div class="steps">
+        <div class="step reveal vis"><div class="step-num">01</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><h3>Regístrate como institución</h3><p>Crea tu cuenta de comercio. HAX verificará tu negocio para que puedas empezar a operar con seguridad.</p></div>
+        <div class="step reveal vis"><div class="step-num">02</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><h3>Conecta el lector</h3><p>Recibe tu lector biométrico Bluetooth y conéctalo a la app HAX en tu dispositivo iOS. Sin terminales costosas.</p></div>
+        <div class="step reveal vis"><div class="step-num">03</div><div class="step-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><h3>Cobra al instante</h3><p>Ingresa el monto, el cliente pone su dedo y listo. Pagos seguros procesados en segundos.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SEGURIDAD (LIGHT) ═══ -->
+<section class="security-section" id="seguridad">
+  <div class="container">
+    <div class="security-header">
+      <div class="section-label reveal">Seguridad</div>
+      <div class="section-title reveal reveal-d1">Cada transacción,<br/>protegida</div>
+      <p class="section-subtitle reveal reveal-d2">Múltiples capas de seguridad de nivel bancario para proteger tu identidad y tu dinero.</p>
+    </div>
+    <div class="security-grid">
+      <div class="sec-card reveal reveal-d1"><div class="sec-card-top"><div class="sec-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><h3>Templates encriptados</h3></div><p>Tus huellas se almacenan como templates biométricos encriptados, no como imágenes. Imposible de revertir.</p></div>
+      <div class="sec-card reveal reveal-d2"><div class="sec-card-top"><div class="sec-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><h3>Tokenización PCI DSS</h3></div><p>Los datos de tus tarjetas se tokenizan con cumplimiento PCI DSS. Nunca se almacenan números completos.</p></div>
+      <div class="sec-card reveal reveal-d3"><div class="sec-card-top"><div class="sec-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>3D Secure</h3></div><p>Autenticación bancaria adicional cuando es requerida, para una capa extra de verificación en cada cobro.</p></div>
+      <div class="sec-card reveal reveal-d4"><div class="sec-card-top"><div class="sec-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><h3>Comunicación cifrada</h3></div><p>Toda la comunicación está cifrada con HTTPS. Cada institución es verificada por HAX antes de poder operar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTACTO (DARK) ═══ -->
+<section class="contact-section" id="contacto">
+  <div class="container">
+    <div class="section-label reveal">Contacto</div>
+    <div class="section-title reveal reveal-d1">¿Listo para empezar?</div>
+    <p class="section-subtitle reveal reveal-d2">Contáctanos para llevar HAX a tu negocio.</p>
+    <div class="contact-grid">
+      <div class="contact-info reveal reveal-d3">
+        <h3>Hablemos</h3>
+        <p>Ya sea que tengas un comercio y quieras aceptar pagos biométricos, o simplemente quieras saber más, estamos aquí para ayudarte.</p>
+        <div class="contact-links">
+          <a href="mailto:soporte@hax.app" class="c-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><div class="c-link-text"><span class="c-link-label">Email</span><span class="c-link-value">soporte@hax.app</span></div></a>
+          <a href="https://api.haxuniversal.com" target="_blank" class="c-link"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><div class="c-link-text"><span class="c-link-label">API</span><span class="c-link-value">api.haxuniversal.com</span></div></a>
+        </div>
+      </div>
+      <form class="contact-form reveal reveal-d4" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="field"><label for="name">Nombre</label><input type="text" id="name" placeholder="Tu nombre" required /></div>
+          <div class="field"><label for="email">Email</label><input type="email" id="email" placeholder="tu@email.com" required /></div>
+        </div>
+        <div class="field"><label for="business">Negocio</label><input type="text" id="business" placeholder="Nombre de tu negocio (opcional)" /></div>
+        <div class="field"><label for="message">Mensaje</label><textarea id="message" placeholder="¿En qué podemos ayudarte?" required></textarea></div>
+        <button type="submit" class="btn-submit">Enviar mensaje</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">HAX</div>
+      <p class="footer-text">&copy; 2025 HAX — Pagos Biométricos. Todos los derechos reservados.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('navbar');
+  const hero = document.querySelector('.hero');
+  new IntersectionObserver(([e]) => {
+    nav.classList.toggle('scrolled', !e.isIntersecting);
+  }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' }).observe(hero);
+
+  const toggle = document.getElementById('mobileToggle');
+  const links = document.getElementById('navLinks');
+  toggle.addEventListener('click', () => links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => links.classList.remove('open')));
+
+  document.querySelectorAll('.how-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.how-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }).observe(document.querySelectorAll('.reveal').forEach(el => {
+    new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }).observe(el);
+  }) || document.body);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-submit');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Enviado';
+    btn.style.opacity = '0.7';
+    setTimeout(() => { btn.textContent = orig; btn.style.opacity = ''; e.target.reset(); }, 2500);
+  }
+</script>
+</body>
+</html>
