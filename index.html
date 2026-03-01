@@ -163,7 +163,7 @@
 
     /* ═══ FOOTER ═══ */
     footer { background: #000; border-top: 1px solid var(--border); padding: 4rem 0 2rem; }
-    .footer-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem; }
+    .footer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
     .footer-brand p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.65; margin-top: 1rem; }
     .footer-col h4 { font-weight: 700; margin-bottom: 1rem; font-size: 0.95rem; }
     .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
@@ -436,9 +436,9 @@
   <div class="container" style="max-width:600px; text-align:center;">
     <h2 class="reveal" style="font-size:2rem; font-weight:800; margin-bottom:0.8rem;">¿Preguntas?</h2>
     <p class="reveal rd1" style="color:var(--text-secondary); margin-bottom:2rem;">Escríbenos para llevar HAX a tu negocio o resolver cualquier duda.</p>
-    <a href="mailto:soporte@hax.app" class="btn-gold reveal rd2" style="margin:0 auto;">
+    <a href="/cdn-cgi/l/email-protection#98ebf7e8f7eaecfdd8f0f9e0b6f9e8e8" class="btn-gold reveal rd2" style="margin:0 auto;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-      soporte@hax.app
+      <span class="__cf_email__" data-cfemail="34475b445b464051745c554c1a554444">[email&#160;protected]</span>
     </a>
   </div>
 </section>
@@ -473,11 +473,18 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Legal</h4>
+        <h4>Legal — Usuarios</h4>
         <ul>
-          <li><a href="#">Términos de Uso</a></li>
-          <li><a href="#">Aviso de Privacidad</a></li>
-          <li><a href="#">Consentimiento Biométrico</a></li>
+          <li><a href="/legal/terminos-usuarios.pdf" target="_blank">Términos y Condiciones</a></li>
+          <li><a href="/legal/aviso-privacidad-usuarios.pdf" target="_blank">Aviso de Privacidad</a></li>
+          <li><a href="/legal/consentimiento-biometrico.pdf" target="_blank">Consentimiento Biométrico</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal — Instituciones</h4>
+        <ul>
+          <li><a href="/legal/terminos-instituciones.pdf" target="_blank">Términos y Condiciones</a></li>
+          <li><a href="/legal/aviso-privacidad-instituciones.pdf" target="_blank">Aviso de Privacidad</a></li>
         </ul>
       </div>
     </div>
@@ -487,7 +494,7 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   // Mobile menu
   const toggle = document.getElementById('mobileToggle');
   const links = document.getElementById('navLinks');
@@ -508,9 +515,4 @@
 
   // Scroll reveal
   const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-</script>
-</body>
-</html>
+    en
