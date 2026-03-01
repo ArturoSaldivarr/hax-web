@@ -180,6 +180,8 @@
     .reveal.vis { opacity: 1; transform: translateY(0); }
     .rd1 { transition-delay: 0.05s; } .rd2 { transition-delay: 0.1s; } .rd3 { transition-delay: 0.15s; }
     .rd4 { transition-delay: 0.2s; } .rd5 { transition-delay: 0.25s; } .rd6 { transition-delay: 0.3s; }
+    /* Fallback: if JS fails, show everything */
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; } }
 
     /* ═══ RESPONSIVE ═══ */
     @media (max-width: 1024px) {
@@ -514,5 +516,16 @@
   }
 
   // Scroll reveal
-  const obs = new IntersectionObserver(entries => {
-    en
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('vis'); obs.unobserve(e.target); } });
+    }, { threshold: 0.01, rootMargin: '0px 0px -20px 0px' });
+    revealEls.forEach(el => obs.observe(el));
+    setTimeout(() => { revealEls.forEach(el => el.classList.add('vis')); }, 3000);
+  } else {
+    revealEls.forEach(el => el.classList.add('vis'));
+  }
+</script>
+</body>
+</html>
